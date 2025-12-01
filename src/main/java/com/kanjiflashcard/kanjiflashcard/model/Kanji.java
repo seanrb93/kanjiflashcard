@@ -10,7 +10,7 @@ public class Kanji {
 
     @Id
     @Getter @Setter
-    private String character;
+    private String literal;
 
     @Getter @Setter
     private String meaning;
@@ -22,7 +22,19 @@ public class Kanji {
     private String kunyomi;
 
     @Getter @Setter
-    private int strokeCount;
+    private int strokes;
+    
+    public Kanji() {
+    }
+    
+    // Constructor with all fields
+    public Kanji(String literal, String meaning, String onyomi, String kunyomi, int strokes) {
+        this.literal = literal;
+        this.meaning = meaning;
+        this.onyomi = onyomi;
+        this.kunyomi = kunyomi;
+        this.strokes = strokes;
+    }
     
 }
 
