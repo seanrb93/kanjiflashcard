@@ -7,7 +7,10 @@ import jakarta.persistence.Entity;
 @Entity
 public class Kanji {
     @Id
-    private Long id;
     private String character;
-
+    private String meaning;
+    private String onyomi;
+    private String kunyomi;
+    private int strokeCount;
 }
+
