@@ -22,74 +22,85 @@ public class KanjidicParser {
     @PostConstruct
     public void loadKanjidic() {
         try {
-            // Load kanjidic2.xml from resources
+            // Load the XML
             ClassPathResource resource = new ClassPathResource("kanjidic2.xml");
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(resource.getInputStream());
-
             doc.getDocumentElement().normalize();
 
-            // Get the first <character> node
-            Node firstCharacter = doc.getElementsByTagName("character").item(0);
+            NodeList characters = doc.getElementsByTagName("character");
+            System.out.println("Found characters: " + characters.getLength());
 
-            if (firstCharacter != null && firstCharacter.getNodeType() == Node.ELEMENT_NODE) {
-                Element characterElement = (Element) firstCharacter;
+            for (int i = 0; i < characters.getLength(); i++) {
+                Node node = characters.item(i);
 
-                // ----- Extract literal -----
-                String literal = characterElement
-                        .getElementsByTagName("literal")
-                        .item(0)
-                        .getTextContent();
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element characterElement = (Element) node;
 
-                // ----- Extract meaning (first one only) -----
-                NodeList meaningList = characterElement
-                        .getElementsByTagName("meaning");
+                    // literal
+                    String literal = characterElement
+                            .getElementsByTagName("literal")
+                            .item(0)
+                            .getTextContent();
 
-                String meaning = null;
-                for (int i = 0; i < meaningList.getLength(); i++) {
-                    Element m = (Element) meaningList.item(i);
-                    if (!m.hasAttribute("m_lang")) {   // Only take English
-                        meaning = m.getTextContent();
-                        break;
+                    // meaning (first English meaning)
+                    String meaning = null;
+                    NodeList meaningList = characterElement.getElementsByTagName("meaning");
+                    for (int m = 0; m < meaningList.getLength(); m++) {
+                        Element mEl = (Element) meaningList.item(m);
+                        if (!mEl.hasAttribute("m_lang")) { // English only
+                            meaning = mEl.getTextContent();
+                            break;
+                        }
                     }
-                }
 
-                // ----- Extract onyomi -----
-                String onyomi = "";
-                NodeList readingList = characterElement.getElementsByTagName("reading");
-                for (int i = 0; i < readingList.getLength(); i++) {
-                    Element r = (Element) readingList.item(i);
-                    if ("ja_on".equals(r.getAttribute("r_type"))) {
-                        onyomi += r.getTextContent() + ",";
+                    if (meaning == null) {
+                        meaning = "[no English meaning]";
                     }
-                }
-                if (onyomi.endsWith(",")) onyomi = onyomi.substring(0, onyomi.length() - 1);
 
-                // ----- Extract kunyomi -----
-                String kunyomi = "";
-                for (int i = 0; i < readingList.getLength(); i++) {
-                    Element r = (Element) readingList.item(i);
-                    if ("ja_kun".equals(r.getAttribute("r_type"))) {
-                        kunyomi += r.getTextContent() + ",";
+                    // onyomi
+                    StringBuilder onyomi = new StringBuilder();
+                    // kunyomi
+                    StringBuilder kunyomi = new StringBuilder();
+
+                    NodeList readings = characterElement.getElementsByTagName("reading");
+                    for (int r = 0; r < readings.getLength(); r++) {
+                        Element rEl = (Element) readings.item(r);
+                        String type = rEl.getAttribute("r_type");
+                        if ("ja_on".equals(type)) {
+                            onyomi.append(rEl.getTextContent()).append(",");
+                        } else if ("ja_kun".equals(type)) {
+                            kunyomi.append(rEl.getTextContent()).append(",");
+                        }
                     }
+
+                    // Remove trailing comma
+                    if (onyomi.length() > 0) onyomi.setLength(onyomi.length() - 1);
+                    if (kunyomi.length() > 0) kunyomi.setLength(kunyomi.length() - 1);
+
+                    // stroke count
+                    int strokes = Integer.parseInt(
+                            characterElement.getElementsByTagName("stroke_count")
+                                    .item(0)
+                                    .getTextContent()
+                    );
+
+                    // Save to DB
+                    Kanji kanji = new Kanji(
+                            literal,
+                            meaning,
+                            onyomi.toString(),
+                            kunyomi.toString(),
+                            strokes
+                    );
+
+                    repository.save(kanji);
                 }
-                if (kunyomi.endsWith(",")) kunyomi = kunyomi.substring(0, kunyomi.length() - 1);
-
-                // ----- Extract stroke count -----
-                int strokes = Integer.parseInt(
-                        characterElement.getElementsByTagName("stroke_count")
-                                .item(0)
-                                .getTextContent()
-                );
-
-                // ----- Save to DB -----
-                Kanji kanji = new Kanji(literal, meaning, onyomi, kunyomi, strokes);
-                repository.save(kanji);
-
-                System.out.println("Loaded first kanji: " + literal);
             }
+
+            System.out.println("Loaded kanji count: " + repository.count());
 
         } catch (Exception e) {
             e.printStackTrace();
