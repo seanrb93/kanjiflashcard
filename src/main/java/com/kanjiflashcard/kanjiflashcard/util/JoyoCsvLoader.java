@@ -29,7 +29,7 @@ public class JoyoCsvLoader {
                 StandardCharsets.UTF_8))) {
 
             List<Kanji> kanjiList = new ArrayList<>(); // Create a new list to hold Kanji objects
-            String line = br.readLine(); // Skips the csv header
+            String line = br.readLine(); // Skips the CSV header
 
             while ((line = br.readLine()) != null) {
                 String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // Splits CSV line into fields
