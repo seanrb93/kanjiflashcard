@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+// Kanji entity representing a Kanji character with its attributes
 @Entity
 public class Kanji {
 
