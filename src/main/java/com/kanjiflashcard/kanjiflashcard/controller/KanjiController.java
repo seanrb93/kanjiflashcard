@@ -16,11 +16,6 @@ public class KanjiController {
         this.kanjiRepo = kanjiRepository;
     }
 
-    @GetMapping("/kanji")
-    public List<Kanji> getAllKanji() {
-        return kanjiRepo.findAll();
-    }
-
     @GetMapping("/random")
     public Kanji getRandomKanji() {
         long count = kanjiRepo.count();
