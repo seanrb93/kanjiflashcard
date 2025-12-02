@@ -7,6 +7,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -46,19 +49,22 @@ public class KanjidicParser {
                             .getTextContent();
 
                     // meaning (first English meaning)
-                    String meaning = null;
                     NodeList meaningList = characterElement.getElementsByTagName("meaning");
+                    List<String> englishMeanings = new ArrayList<>();
+
                     for (int m = 0; m < meaningList.getLength(); m++) {
-                        Element mEl = (Element) meaningList.item(m);
-                        if (!mEl.hasAttribute("m_lang")) { // English only
-                            meaning = mEl.getTextContent();
-                            break;
+                        Element el = (Element) meaningList.item(m);
+                        
+                        if (!el.hasAttribute("m_lang")) { // English only
+                            englishMeanings.add(el.getTextContent());
                         }
                     }
 
-                    if (meaning == null || meaning.isEmpty()) {
+                    if (englishMeanings.isEmpty()) {
                         continue; // skip if no English meaning
                     }
+
+                    String meanings = String.join(",", englishMeanings);
 
                     // onyomi
                     StringBuilder onyomi = new StringBuilder();
@@ -90,7 +96,7 @@ public class KanjidicParser {
                     // Save to DB
                     Kanji kanji = new Kanji(
                             literal,
-                            meaning,
+                            meanings,
                             onyomi.toString(),
                             kunyomi.toString(),
                             strokes

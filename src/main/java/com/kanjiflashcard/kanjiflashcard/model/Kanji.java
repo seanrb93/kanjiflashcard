@@ -13,7 +13,7 @@ public class Kanji {
     private String literal;
 
     @Getter @Setter
-    private String meaning;
+    private String meanings;
 
     @Getter @Setter
     private String onyomi;
@@ -28,9 +28,9 @@ public class Kanji {
     }
     
     // Constructor with all fields
-    public Kanji(String literal, String meaning, String onyomi, String kunyomi, int strokes) {
+    public Kanji(String literal, String meanings, String onyomi, String kunyomi, int strokes) {
         this.literal = literal;
-        this.meaning = meaning;
+        this.meanings = meanings;
         this.onyomi = onyomi;
         this.kunyomi = kunyomi;
         this.strokes = strokes;
