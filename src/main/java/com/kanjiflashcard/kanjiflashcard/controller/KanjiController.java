@@ -28,9 +28,7 @@ public class KanjiController {
             return null; // Or throw an exception
         }
         int randomIndex = (int) (Math.random() * count);
-        Kanji randomKanji = kanjiRepo.findAll(PageRequest.of(randomIndex, 1)).getContent().get(0);
-        return randomKanji;
-        
+        return kanjiRepo.findAll(PageRequest.of(randomIndex, 1)).getContent().get(0);        
     }
 
 }
