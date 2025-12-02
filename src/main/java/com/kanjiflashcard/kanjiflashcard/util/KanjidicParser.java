@@ -56,8 +56,8 @@ public class KanjidicParser {
                         }
                     }
 
-                    if (meaning == null) {
-                        meaning = "[no English meaning]";
+                    if (meaning == null || meaning.isEmpty()) {
+                        continue; // skip if no English meaning
                     }
 
                     // onyomi
