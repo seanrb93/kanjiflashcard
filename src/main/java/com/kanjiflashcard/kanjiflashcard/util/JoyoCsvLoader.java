@@ -29,10 +29,10 @@ public class JoyoCsvLoader {
                 StandardCharsets.UTF_8))) {
 
             List<Kanji> kanjiList = new ArrayList<>(); // Create a new list to hold Kanji objects
-            String line = br.readLine(); // Skips the csv header
+            String line = br.readLine(); // Skips the CSV header
 
             while ((line = br.readLine()) != null) {
-                String[] c = line.split(",");
+                String[] c = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // Splits CSV line into fields
 
                 String literal = c[1];
                 String meanings = c[7];
@@ -57,6 +57,7 @@ public class JoyoCsvLoader {
 
             kanjiRepository.saveAll(kanjiList); // Saves all Kanji objects to the database
             System.out.println("Loaded Joyo kanji count: " + kanjiRepository.count()); // Prints the count of kanji loaded
+            
 
         } catch (IOException e) {
             e.printStackTrace();
