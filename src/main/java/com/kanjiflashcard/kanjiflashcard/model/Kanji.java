@@ -23,17 +23,21 @@ public class Kanji {
 
     @Getter @Setter
     private int strokes;
+
+    @Getter @Setter
+    private int jlptLevel;
     
     public Kanji() {
     }
     
     // Constructor with all fields
-    public Kanji(String literal, String meanings, String onyomi, String kunyomi, int strokes) {
+    public Kanji(String literal, String meanings, String onyomi, String kunyomi, int strokes, int jlptLevel) {
         this.literal = literal;
         this.meanings = meanings;
         this.onyomi = onyomi;
         this.kunyomi = kunyomi;
         this.strokes = strokes;
+        this.jlptLevel = jlptLevel;
     }
     
 }

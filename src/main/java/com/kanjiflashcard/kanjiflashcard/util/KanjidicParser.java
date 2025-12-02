@@ -50,24 +50,25 @@ public class KanjidicParser {
 
                     // meaning (first English meaning)
                     NodeList meaningList = characterElement.getElementsByTagName("meaning");
-                    List<String> englishMeanings = new ArrayList<>();
+                    List<String> meanings = new ArrayList<>();
 
                     for (int m = 0; m < meaningList.getLength(); m++) {
                         Element el = (Element) meaningList.item(m);
-                        
+
                         if (!el.hasAttribute("m_lang")) { // English only
-                            englishMeanings.add(el.getTextContent());
+                            meanings.add(el.getTextContent());
                         }
                     }
 
-                    if (englishMeanings.isEmpty()) {
+                    if (meanings.isEmpty()) {
                         continue; // skip if no English meaning
                     }
 
-                    String meanings = String.join(",", englishMeanings);
+                    String engMeanings = String.join(",", meanings);
 
                     // onyomi
                     StringBuilder onyomi = new StringBuilder();
+
                     // kunyomi
                     StringBuilder kunyomi = new StringBuilder();
 
@@ -83,24 +84,41 @@ public class KanjidicParser {
                     }
 
                     // Remove trailing comma
-                    if (onyomi.length() > 0) onyomi.setLength(onyomi.length() - 1);
-                    if (kunyomi.length() > 0) kunyomi.setLength(kunyomi.length() - 1);
+                    if (onyomi.length() > 0)
+                        onyomi.setLength(onyomi.length() - 1);
+                    if (kunyomi.length() > 0)
+                        kunyomi.setLength(kunyomi.length() - 1);
 
                     // stroke count
                     int strokes = Integer.parseInt(
                             characterElement.getElementsByTagName("stroke_count")
                                     .item(0)
-                                    .getTextContent()
-                    );
+                                    .getTextContent());
+
+                    // JLPT level
+                    int jlpt = 0;
+                    NodeList jlptList = characterElement.getElementsByTagName("jlpt");
+                    
+                    if (jlptList.getLength() > 0) {
+                        String jlptlvl = jlptList.item(0).getTextContent();
+                        try {
+                            jlpt = Integer.parseInt(jlptlvl);
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    if (jlpt == 0) {
+                        continue; // skip if no JLPT level
+                    }
 
                     // Save to DB
                     Kanji kanji = new Kanji(
                             literal,
-                            meanings,
+                            engMeanings,
                             onyomi.toString(),
                             kunyomi.toString(),
-                            strokes
-                    );
+                            strokes,
+                            jlpt);
 
                     repository.save(kanji);
                 }
