@@ -76,11 +76,12 @@
             document.getElementById("on").textContent = data.onyomi || "—";
             document.getElementById("kun").textContent = data.kunyomi || "—";
             document.getElementById("strokes").textContent = data.strokeCount || "—";
-            document.getElementById("jlpt").textContent = data.jlpt ? ("N" + data.jlpt) : "—";
+            document.getElementById("jlpt").textContent = data.jlptLevel ? ("N" + data.jlptLevel) : "—";
             document.getElementById("freq").textContent = data.frequency || "—";
         }
 
         loadCard(); // load first kanji automatically
+
     </script>
 
 </body>
