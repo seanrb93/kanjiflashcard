@@ -51,6 +51,16 @@
 
 <body>
 
+    <div id="controls" style="margin-bottom: 20px;">
+        <button onclick="loadCard()">Random</button>
+        <button onclick="loadCard(5)">N5</button>
+        <button onclick="loadCard(4)">N4</button>
+        <button onclick="loadCard(3)">N3</button>
+        <button onclick="loadCard(2)">N2</button>
+        <button onclick="loadCard(1)">N1</button>
+    </div>
+
+
     <div class="card">
         <div id="kanji" class="kanji">日</div>
 
@@ -67,22 +77,46 @@
     </div>
 
     <script>
-        async function loadCard() {
-            const res = await fetch('/api/random');
-            const data = await res.json();
+        async function loadCard(jlpt = null) {
 
-            document.getElementById("kanji").textContent = data.literal;
-            document.getElementById("meanings").textContent = data.meanings;
-            document.getElementById("on").textContent = data.onyomi || "—";
-            document.getElementById("kun").textContent = data.kunyomi || "—";
-            document.getElementById("strokes").textContent = data.strokeCount || "—";
-            document.getElementById("jlpt").textContent = data.jlptLevel ? ("N" + data.jlptLevel) : "—";
-            document.getElementById("freq").textContent = data.frequency || "—";
+            let url = "/api/random";
+
+            if (jlpt !== null) {
+                url += "?jlpt=" + jlpt;
+            }
+
+            console.log("Fetching:", url); // DEBUG
+
+            try {
+                const res = await fetch(url);
+
+                if (!res.ok) {
+                    console.error("Request failed:", res.status);
+                    return;
+                }
+
+                const data = await res.json();
+
+                // Fill card
+                document.getElementById("kanji").textContent = data.literal;
+                document.getElementById("meanings").textContent = data.meanings || "—";
+                document.getElementById("on").textContent = data.onyomi || "—";
+                document.getElementById("kun").textContent = data.kunyomi || "—";
+                document.getElementById("strokes").textContent = data.strokeCount || "—";
+                document.getElementById("jlpt").textContent = data.jlpt ? ("N" + data.jlpt) : "—";
+                document.getElementById("grade").textContent = data.grade || "—";
+                document.getElementById("freq").textContent = data.frequency || "—";
+
+            } catch (e) {
+                console.error("Error loading card:", e);
+            }
         }
 
-        loadCard(); // load first kanji automatically
-
+        // Load first kanji on startup
+        loadCard();
+        
     </script>
+
 
 </body>
 
