@@ -5,6 +5,6 @@ RUN mvn clean package -DskipTests
 
 FROM gcr.io/distroless/java21-debian12 AS runtime
 WORKDIR /app
-COPY --from=build /app/target/kanjiflashcard-0.0.1-SNAPSHOT.jar /app/kanjiflashcard-0.0.1-SNAPSHOT.jar
+COPY --from=build /app/target/kanjiflashcard-1.0.0.jar /app/kanjiflashcard-1.0.0.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/kanjiflashcard-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/kanjiflashcard-1.0.0.jar"]
