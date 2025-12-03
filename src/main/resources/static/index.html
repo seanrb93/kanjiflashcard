@@ -165,6 +165,54 @@
             loadCard();
         }
 
+        document.addEventListener("keydown", function (e) {
+            // Prevent scrolling for spacebar
+            if (e.code === "Space") {
+                e.preventDefault();
+            }
+
+            switch (e.code) {
+
+                // Flip card (spacebar)
+                case "Space":
+                    flipCard();
+                    break;
+
+                // Next card
+                case "ArrowRight":
+                    loadCard();
+                    break;
+
+                case "Digit1":
+                    loadCard(1);  // Show N1
+                    break;
+
+                case "Digit2":
+                    loadCard(2);  // Show N2
+                    break;
+
+                case "Digit3":
+                    loadCard(3);  // Show N3
+                    break;
+
+                case "Digit4":
+                    loadCard(4);  // Show N4
+                    break;
+
+                case "Digit5":
+                    loadCard(5);  // Show N5
+                    break;
+
+                case "KeyR": // Random (all levels)
+                    loadAny();
+                    break;
+                
+                case "Digit0": // Random (all levels)
+                    loadAny(); 
+                    break;
+            }
+        });
+
         // Load first kanji on startup
         loadCard();
     </script>
