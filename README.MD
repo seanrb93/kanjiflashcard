@@ -1,13 +1,13 @@
 # Kanji Flashcard
 
-A Spring Boot web application for studying Japanese Kanji characters using flashcards. The app displays random Kanji from the Jōyō kanji (常用漢字) list with their meanings, readings, and other useful information.
+A Spring Boot web application for studying Japanese Kanji characters using flashcards. The app displays random Kanji from the Jōyō kanji (常用漢字) list with their meanings, readings, and other useful information. The front of the card displays the Kanji character, whereas the back of the card displays its meaning and other information.
 
 ## Features
 
 - **Random Kanji Display**: Shows a random Kanji character each time you click "Next Kanji"
 - **Comprehensive Information**: Each flashcard displays:
-  - Kanji character
-  - English meanings
+  - Kanji character/literal
+  - English
   - Onyomi (音読み) - Chinese readings
   - Kunyomi (訓読み) - Japanese readings
   - Stroke count
@@ -34,7 +34,7 @@ A Spring Boot web application for studying Japanese Kanji characters using flash
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/bitterskunk/kanjiflashcard.git
+   git clone https://github.com/seanrb93/kanjiflashcard
    cd kanjiflashcard
    ```
 
@@ -118,6 +118,19 @@ The application uses Jōyō kanji (常用漢字) data, which is the list of 2,13
 - Onyomi and Kunyomi readings
 - Newspaper frequency rank
 - JLPT level
+
+## Keyboard Shortcuts
+
+You can use keyboard shortcuts for quick access:
+
+- 1 (N1 Kanji)
+- 2 (N2 Kanji)
+- 3 (N3 Kanji)
+- 4 (N4 Kanji)
+- 5 (N5 Kanji)
+- Spacebar (Flip card)
+- Right Arrow (Next card)
+- 0 or R (Random card from all JLPT levels)
 
 ## License
 
