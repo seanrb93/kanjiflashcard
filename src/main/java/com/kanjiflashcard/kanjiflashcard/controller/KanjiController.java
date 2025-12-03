@@ -2,9 +2,6 @@ package com.kanjiflashcard.kanjiflashcard.controller;
 
 import com.kanjiflashcard.kanjiflashcard.model.Kanji;
 import com.kanjiflashcard.kanjiflashcard.repository.KanjiRepository;
-
-import jakarta.persistence.criteria.CriteriaBuilder.In;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
