@@ -52,7 +52,7 @@
 <body>
 
     <div id="controls" style="margin-bottom: 20px;">
-        <button onclick="loadCard()">Random</button>
+        <button onclick="loadAny()">Random (All Levels)</button>
         <button onclick="loadCard(5)">N5</button>
         <button onclick="loadCard(4)">N4</button>
         <button onclick="loadCard(3)">N3</button>
@@ -77,12 +77,19 @@
     </div>
 
     <script>
+
+        let lastJlpt = null;
+
         async function loadCard(jlpt = null) {
+
+            if (jlpt !== null) {
+                lastJlpt = jlpt;
+            }
 
             let url = "/api/random";
 
-            if (jlpt !== null) {
-                url += "?jlpt=" + jlpt;
+            if (lastJlpt !== null) {
+                url += "?jlpt=" + lastJlpt;
             }
 
             console.log("Fetching:", url); // DEBUG
@@ -111,9 +118,14 @@
             }
         }
 
+        async function loadAny() {
+            lastJlpt = null;
+            loadCard();
+        }
+
         // Load first kanji on startup
         loadCard();
-        
+
     </script>
 
 
