@@ -1,5 +1,8 @@
 package com.kanjiflashcard.kanjiflashcard;
 
-public class TestConfig {
+import org.springframework.boot.test.context.TestConfiguration;
 
+@TestConfiguration
+public class TestConfig {
+    // add test-only beans if needed later
 }
