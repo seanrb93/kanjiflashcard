@@ -1,13 +1,13 @@
-name: Deploy to AWS (ECS)
+name: Deploy to a AWS ECS instance via Terraform
 
 on:
   workflow_dispatch:
 
 jobs:
   deploy-aws:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     env:
-      TF_WORKING_DIR: terraform/aws
+      TF_WORKING_DIR: terraform/aws/app
       IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
       IMAGE_TAG: latest
 
