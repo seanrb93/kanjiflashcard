@@ -29,6 +29,7 @@ jobs:
 
       - name: Terraform Apply (Creates S3 + DynamoDB)
         working-directory: terraform/aws/backend
-        run: terraform apply -auto-approve \
-          -var="bucket_name=kanji-tf-state-srb" \
-          -var="dynamodb_table=terraform-locks"
+        run: |
+          terraform apply -auto-approve \
+            -var="bucket_name=kanji-tf-state-srb" \
+            -var="dynamodb_table=terraform-locks"
