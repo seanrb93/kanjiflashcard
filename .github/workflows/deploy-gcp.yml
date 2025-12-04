@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run via Terraform
+name: Deploy to Google Cloud Run via Terraform
 on:
   workflow_dispatch:
 
