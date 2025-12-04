@@ -1,0 +1,37 @@
+name: Deploy to AWS (ECS)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-aws:
+    runs-on: ubuntu-slim
+    env:
+      TF_WORKING_DIR: terraform/aws
+      IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
+      IMAGE_TAG: latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init
+
+      - name: Terraform apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform apply -auto-approve \
+            -var "aws_region=eu-west-1" \
+            -var "image_repo=${{ env.IMAGE_REPO }}" \
+            -var "image_tag=${{ env.IMAGE_TAG }}"
