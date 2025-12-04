@@ -28,6 +28,10 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
 
+      - name: Terraform Format
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform fmt
+
       - name: Terraform apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
