@@ -2,14 +2,10 @@ variable "aws_region" {
   default = "eu-west-1"
 }
 
-variable "image_repo" {
-  description = "Repository for the Docker image"
+variable "bucket_name" {
+  description = "Name of the S3 bucket for Terraform state"
 }
 
-variable "image_tag" {
-  default = "latest"
-}
-
-variable "service_name" {
-  default = "kanji-flashcards"
+variable "dynamodb_table" {
+  description = "Name of the DynamoDB table for Terraform locks"
 }
