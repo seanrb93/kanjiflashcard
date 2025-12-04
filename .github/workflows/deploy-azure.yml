@@ -1,11 +1,11 @@
-name: Deploy to Azure (Container App)
+name: Deploy to Azure Container Instances via Terraform
 
 on:
   workflow_dispatch:
 
 jobs:
   deploy-azure:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     env:
       TF_WORKING_DIR: terraform/azure
       IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Azure login
+      - name: Configure Credentials for Azure
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -22,11 +22,11 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform init
+      - name: Run Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init
 
-      - name: Terraform apply
+      - name: Run Terraform apply
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           terraform apply -auto-approve \
