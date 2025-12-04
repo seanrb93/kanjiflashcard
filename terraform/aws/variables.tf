@@ -1,13 +1,15 @@
 variable "aws_region" {
-  type    = string
   default = "eu-west-1"
 }
 
 variable "image_repo" {
-  type = string
+  description = "Repository for the Docker image"
 }
 
 variable "image_tag" {
-  type    = string
   default = "latest"
+}
+
+variable "service_name" {
+  default = "kanji-flashcards"
 }
