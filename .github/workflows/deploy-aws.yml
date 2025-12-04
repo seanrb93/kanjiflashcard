@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy-aws:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     env:
       TF_WORKING_DIR: terraform/aws
       IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
