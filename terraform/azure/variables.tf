@@ -1,17 +1,16 @@
 variable "location" {
   type    = string
-  default = "westeurope"
+  default = "ukwest"
 }
 
-variable "image_repo" {
-  type = string
-}
-
-variable "image_tag" {
+variable "resource_group" {
   type    = string
-  default = "latest"
+  default = "kanji-azure-rg"
 }
 
-variable "resource_group_name" {
-  type = string
+variable "image" {
+  type    = string
+  default = "ghcr.io/seanrb93/kanji-flashcards:latest"
 }
+
+
