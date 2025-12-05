@@ -1,6 +1,10 @@
 name: Deploy to Azure Container Apps via Terraform
 on:
   workflow_dispatch:
+  
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy-azure:
@@ -28,11 +32,21 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: terraform init -input=false
 
       - name: Terraform Apply
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_USE_OIDC: true
         run: |
           terraform apply -auto-approve \
-            -var "image_repo=${{ env.IMAGE_REPO }}" \
-            -var "image_tag=${{ env.IMAGE_TAG }}"
+            -var "image=${{ env.IMAGE_REPO }}:${{ env.IMAGE_TAG }}" \
+            -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}"
