@@ -35,7 +35,7 @@ resource "azurerm_container_app_environment" "kanji_env" {
 
 resource "azurerm_container_app" "kanji" {
   name                         = "kanji-flashcards"
-  resource_group_name          = azurerm_resource_group.rg.kanji_rg.name
+  resource_group_name          = azurerm_resource_group.kanji_rg.name
   container_app_environment_id = azurerm_container_app_environment.kanji_env.id
 
   revision_mode = "Single"
