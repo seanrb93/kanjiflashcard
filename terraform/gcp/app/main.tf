@@ -56,7 +56,7 @@ resource "google_cloud_run_service" "kanji" {
   template {
     spec {
       containers {
-        image = "${var.image_repo}:${var.image_tag}"
+        image = "europe-west2-docker.pkg.dev/${var.project_id}/kanji-app/kanji-flashcards:latest"
         ports {
           container_port = 8080
         }

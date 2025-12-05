@@ -21,6 +21,17 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker europe-west2-docker.pkg.dev
+        
+      - name: Push image to Artifact Registry
+        run: |
+          docker tag ghcr.io/${{ github.repository_owner }}/kanji-flashcards:latest \
+          europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards:latest
+
+          docker push europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards:latest
+
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
