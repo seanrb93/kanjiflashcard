@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TF_WORKING_DIR: terraform/gcp
+      TF_WORKING_DIR: terraform/gcp/app
       IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
       IMAGE_TAG: latest
 
