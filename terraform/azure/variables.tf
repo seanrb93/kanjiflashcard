@@ -1,17 +1,23 @@
 variable "location" {
   type    = string
-  default = "westeurope"
+  description = "The Azure region"
+  default = "ukwest"
 }
 
-variable "image_repo" {
-  type = string
+variable "resource_group" {
+  type        = string
+  description = "The name of the resource group"
+  default     = "kanji-azure-rg"
+
 }
 
-variable "image_tag" {
+variable "image" {
   type    = string
-  default = "latest"
+  description = "The container image for the Azure Container App"
+  default = "ghcr.io/seanrb93/kanji-flashcards:latest"
 }
 
-variable "resource_group_name" {
-  type = string
+variable "subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
 }
