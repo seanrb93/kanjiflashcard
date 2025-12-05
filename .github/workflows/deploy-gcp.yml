@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GOOGLE_CLOUD_PROJECT: ${{ secrets.GCP_PROJECT_ID }}
       TF_WORKING_DIR: terraform/gcp/app
       IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
       IMAGE_TAG: latest
@@ -50,6 +49,6 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
           terraform apply -auto-approve \
-            -var "project_id=${{ env.GOOGLE_CLOUD_PROJECT }}" \
+            -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards" \
             -var "image_tag=latest"
