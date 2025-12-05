@@ -31,7 +31,6 @@ jobs:
 
           docker push europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards:latest
 
-
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
