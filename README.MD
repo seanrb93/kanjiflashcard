@@ -1,48 +1,43 @@
 # Kanji Flashcard
 
-A Spring Boot web application for studying Japanese Kanji using interactive flashcards. Features all 2,136 Jōyō kanji characters with meanings, readings, stroke counts, and JLPT levels.
+A small Spring Boot web app for practicing Jōyō kanji (2,136 characters) with interactive flashcards.
 
-## Quick Start
-
+Quick start
 ```bash
-# Clone and run
 git clone https://github.com/seanrb93/kanjiflashcard
 cd kanjiflashcard
 mvn spring-boot:run
+# or with Docker:
+# docker build -t kanjiflashcard . && docker run -p 8080:8080 kanjiflashcard
 ```
+Open http://localhost:8080
 
-Open `http://localhost:8080` in your browser.
-
-### Docker
-
-```bash
-docker build -t kanjiflashcard .
-docker run -p 8080:8080 kanjiflashcard
-```
-
-## Features
-
+Features
 - Random kanji flashcards with flip animation
-- Filter by JLPT level (N1-N5)
-- Shows meanings, onyomi/kunyomi readings, stroke count, and frequency
+- Filter by JLPT level (N1–N5)
+- Shows meanings, readings, stroke count
 
-## Keyboard Shortcuts
+Keyboard shortcuts
+- Space: flip card
+- → : next card
+- 1–5: filter by JLPT
+- 0 or R: random (all levels)
 
-| Key | Action |
-|-----|--------|
-| `Space` | Flip card |
-| `→` | Next card |
-| `1-5` | Filter by JLPT level |
-| `0` or `R` | Random (all levels) |
+Terraform / Cloud
+- This repo contains HCL (Terraform) configs to provision infrastructure.
+- Supported clouds: AWS, GCP, Azure.
+- Example (run from the terraform config directory):
+  ```bash
+  terraform init
+  terraform apply -var="cloud=aws" -var="region=us-east-1"
+  ```
+- Ensure your cloud credentials are configured (AWS CLI, gcloud, az CLI, or environment vars) before running Terraform.
 
-## Tech Stack
+API
+GET /api/random (optional ?jlpt=N)
 
-Java 21 • Spring Boot 4 • H2 Database • Maven
+Tech stack
+Java 21 • Spring Boot 4 • H2 • Maven • Terraform HCL
 
-## API
-
-`GET /api/random` - Returns a random kanji (optional `?jlpt=N` parameter)
-
-## License
-
-Open source - free to use and modify.
+License
+Open source — free to use and modify.
