@@ -25,3 +25,4 @@ jobs:
       tf_vars: >
         -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards"
         -var "image_tag=latest"
+    secrets: inherit
