@@ -1,6 +1,6 @@
 name: Deploy to Google Cloud Run via Terraform
 
-on: workflow_dispatch
+on: workflow_dispa​tch
 
 jobs:
   deploy:
@@ -9,6 +9,7 @@ jobs:
       cloud_provider: gcp
       tf_directory: terraform/gcp
       tf_vars: >
-        -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
         -var "image_tag=latest"
-    secrets: inherit
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
