@@ -41,10 +41,7 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      - name: Test Java
-        run: mvn test --batch-mode
-
-      - name: Build Java
+      - name: Test & Build Java
         run: mvn -B package
 
       - name: Build Docker
