@@ -7,7 +7,7 @@ jobs:
     uses: ./.github/workflows/template.yml
     with:
       cloud_provider: gcp
-      tf_directory: terraform/gcp/app
+      tf_directory: terraform/gcp
       tf_vars: >
         -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
         -var "image_tag=latest"
