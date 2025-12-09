@@ -125,4 +125,11 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ${{ inputs.tf_directory }}
-        run: terraform apply -auto-approve ${{ inputs.tf_vars }}
+        run: |
+          if [ "${{ inputs.cloud_provider }}" = "gcp" ]; then
+            terraform apply -auto-approve -var "project_id=${{ secrets.GCP_PROJECT_ID }}" ${{ inputs.tf_vars }}
+          elif [ "${{ inputs.cloud_provider }}" = "azure" ]; then
+            terraform apply -auto-approve -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" ${{ inputs.tf_vars }}
+          else
+            terraform apply -auto-approve ${{ inputs.tf_vars }}
+          fi
