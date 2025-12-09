@@ -1,54 +1,28 @@
 name: Deploy to Google Cloud Run via Terraform
-on:
-  workflow_dispatch:
+
+on: workflow_dispatch
 
 jobs:
-  deploy-gcp:
+  deploy:
     runs-on: ubuntu-latest
-
-    env:
-      TF_WORKING_DIR: terraform/gcp
-      IMAGE_REPO: ghcr.io/${{ github.repository_owner }}/kanji-flashcards
-      IMAGE_TAG: latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Configure Credentials for Google Cloud
+      - name: GCP Auth
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Authenticate to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Pull image from GHCR
-        run: docker pull ghcr.io/${{ github.repository_owner }}/kanji-flashcards:latest
-
-      - name: Configure Docker for Artifact Registry
+      - name: Configure Artifact Registry auth
         run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-      - name: Push image to Artifact Registry
-        run: |
-          docker tag ghcr.io/${{ github.repository_owner }}/kanji-flashcards:latest \
-            europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards:latest
-
-          docker push europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards:latest
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Reusable Pipeline
+        uses: ./.github/workflows/ci-template.yml
         with:
-          terraform_version: 1.9.5
-
-      - name: Run Terraform init
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -input=false
-
-      - name: Run Terraform apply
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: |
-          terraform apply -auto-approve \
-            -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
-            -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards" \
+          registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
+          registry_username: ""
+          registry_password: ""
+          push_image: true
+          tf_directory: terraform/gcp/app
+          tf_vars: >
+            -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
+            -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards"
             -var "image_tag=latest"

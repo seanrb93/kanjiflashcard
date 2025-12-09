@@ -1,0 +1,72 @@
+name: CI/CD Template
+
+on:
+  workflow_call:
+    inputs:
+      registry_url:
+        required: true
+        type: string
+      push_image:
+        required: true
+        type: boolean
+      registry_username:
+        required: false
+        type: string
+      registry_password:
+        required: false
+        type: string
+      tf_directory:
+        required: true
+        type: string
+      tf_vars:
+        required: false
+        type: string
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: kanji-flashcards
+      IMAGE_TAG: latest
+      FULL_IMAGE: ${{ inputs.registry_url }}/kanji-flashcards:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test Java
+        run: mvn test --batch-mode
+
+      - name: Build Java
+        run: mvn -B package
+
+      - name: Build Docker
+        run: docker build -t ${{ env.FULL_IMAGE }} .
+
+      - name: Scan Image with Trivy
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.FULL_IMAGE }}
+          severity: CRITICAL,HIGH
+
+      - name: Login to registry
+        if: inputs.registry_password != ''
+        run: |
+          echo "${{ inputs.registry_password }}" | \
+            docker login ${{ inputs.registry_url }} \
+            -u ${{ inputs.registry_username }} \
+            --password-stdin
+
+      - name: Push Image
+        if: inputs.push_image == true
+        run: docker push ${{ env.FULL_IMAGE }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ${{ inputs.tf_directory }}
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ${{ inputs.tf_directory }}
+        run: terraform apply -auto-approve ${{ inputs.tf_vars }}
