@@ -36,6 +36,7 @@ jobs:
     env:
       IMAGE_NAME: kanji-flashcards
       IMAGE_TAG: latest
+      FULL_IMAGE: ""
 
     steps:
       - uses: actions/checkout@v4
