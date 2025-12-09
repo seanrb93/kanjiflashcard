@@ -15,7 +15,7 @@ jobs:
         run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
       - name: Reusable Pipeline
-        uses: ./.github/workflows/template.yml@main
+        uses: seanrb93/kanjiflashcard/.github/workflows/ci-template.yml@main
         with:
           registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
           registry_username: ""

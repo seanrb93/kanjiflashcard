@@ -18,7 +18,7 @@ jobs:
           az acr login --name ${{ secrets.ACR_NAME }}
 
       - name: Reusable Pipeline
-        uses: ./.github/workflows/template.yml@main
+        uses: seanrb93/kanjiflashcard/.github/workflows/ci-template.yml@main
         with:
           registry_url: ${{ secrets.ACR_LOGIN_SERVER }}
           registry_username: ${{ secrets.ACR_USERNAME }}
