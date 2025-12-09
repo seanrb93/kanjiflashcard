@@ -1,6 +1,11 @@
 name: Deploy to Google Cloud Run via Terraform
 
-on: workflow_dispa​tch
+on: workflow_dispatch
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
 
 jobs:
   deploy:
