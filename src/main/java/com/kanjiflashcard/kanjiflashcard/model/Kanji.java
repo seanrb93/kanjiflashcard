@@ -5,45 +5,79 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-// Kanji entity representing a Kanji character with its attributes
+/**
+ * Kanji entity representing a Kanji character with its attributes.
+ */
 @Entity
 public class Kanji {
 
+    /** The kanji character literal. */
     @Id
-    @Getter @Setter
+    @Getter
+    @Setter
     private String literal;
 
-    @Getter @Setter
+    /** The meanings of the kanji. */
+    @Getter
+    @Setter
     private String meanings;
 
-    @Getter @Setter
+    /** The on'yomi (Chinese reading) of the kanji. */
+    @Getter
+    @Setter
     private String onyomi;
 
-    @Getter @Setter
+    /** The kun'yomi (Japanese reading) of the kanji. */
+    @Getter
+    @Setter
     private String kunyomi;
 
-    @Getter @Setter
+    /** The number of strokes in the kanji. */
+    @Getter
+    @Setter
     private int strokeCount;
 
-    @Getter @Setter
+    /** The JLPT level of the kanji. */
+    @Getter
+    @Setter
     private int jlptLevel;
 
-    @Getter @Setter
+    /** The frequency ranking of the kanji. */
+    @Getter
+    @Setter
     private int frequency;
-    
+
+    /**
+     * Default constructor.
+     */
     public Kanji() {
     }
-    
-    // Constructor with all fields
-    public Kanji(String literal, String meanings, String onyomi, String kunyomi, int strokeCount, int jlptLevel, int frequency) {
-        this.literal = literal;
-        this.meanings = meanings;
-        this.onyomi = onyomi;
-        this.kunyomi = kunyomi;
-        this.strokeCount = strokeCount;
-        this.jlptLevel = jlptLevel;
-        this.frequency = frequency;
-    }
-    
-}
 
+    /**
+     * Constructor with all fields.
+     *
+     * @param literalVal     the kanji character
+     * @param meaningsVal    the meanings
+     * @param onyomiVal      the on'yomi reading
+     * @param kunyomiVal     the kun'yomi reading
+     * @param strokeCountVal the stroke count
+     * @param jlptLevelVal   the JLPT level
+     * @param frequencyVal   the frequency ranking
+     */
+    public Kanji(final String literalVal,
+            final String meaningsVal,
+            final String onyomiVal,
+            final String kunyomiVal,
+            final int strokeCountVal,
+            final int jlptLevelVal,
+            final int frequencyVal) {
+        this.literal = literalVal;
+        this.meanings = meaningsVal;
+        this.onyomi = onyomiVal;
+        this.kunyomi = kunyomiVal;
+        this.strokeCount = strokeCountVal;
+        this.jlptLevel = jlptLevelVal;
+        this.frequency = frequencyVal;
+    }
+
+}
