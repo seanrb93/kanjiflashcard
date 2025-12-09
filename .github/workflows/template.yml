@@ -3,18 +3,10 @@ name: CI/CD Template
 on:
   workflow_call:
     inputs:
-      registry_url:
+      cloud_provider:
         required: true
         type: string
-      push_image:
-        required: true
-        type: boolean
-      registry_username:
-        required: false
-        type: string
-      registry_password:
-        required: false
-        type: string
+        description: 'aws, azure, or gcp'
       tf_directory:
         required: true
         type: string
@@ -22,7 +14,19 @@ on:
         required: false
         type: string
     secrets:
-      registry_password:
+      GITHUB_TOKEN:
+        required: false
+      AZURE_CLIENT_ID:
+        required: false
+      AZURE_TENANT_ID:
+        required: false
+      AZURE_SUBSCRIPTION_ID:
+        required: false
+      ACR_NAME:
+        required: false
+      GCP_SA_KEY:
+        required: false
+      GCP_PROJECT_ID:
         required: false
       AWS_ACCESS_KEY_ID:
         required: false
@@ -36,7 +40,6 @@ jobs:
     env:
       IMAGE_NAME: kanji-flashcards
       IMAGE_TAG: latest
-      FULL_IMAGE: ${{ inputs.registry_url }}/kanji-flashcards:latest
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +54,52 @@ jobs:
       - name: Test & Build Java
         run: mvn -B package
 
+      # === GitHub Container Registry (AWS) ===
+      - name: Login to GHCR
+        if: inputs.cloud_provider == 'aws'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set GHCR Image
+        if: inputs.cloud_provider == 'aws'
+        run: echo "FULL_IMAGE=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+
+      # === Azure Container Registry ===
+      - name: Login to Azure
+        if: inputs.cloud_provider == 'azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to ACR
+        if: inputs.cloud_provider == 'azure'
+        run: az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Set ACR Image
+        if: inputs.cloud_provider == 'azure'
+        run: echo "FULL_IMAGE=${{ secrets.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+
+      # === Google Artifact Registry ===
+      - name: Login to GCP
+        if: inputs.cloud_provider == 'gcp'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure GCR Auth
+        if: inputs.cloud_provider == 'gcp'
+        run: gcloud auth configure-docker europe-west2-docker.pkg.dev
+
+      - name: Set GCR Image
+        if: inputs.cloud_provider == 'gcp'
+        run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+
+      # === Common Steps ===
       - name: Build Docker
         run: docker build -t ${{ env.FULL_IMAGE }} .
 
@@ -58,18 +107,8 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: ${{ env.FULL_IMAGE }}
-          severity: CRITICAL,HIGH
-
-      - name: Login to registry
-        if: inputs.registry_password != ''
-        run: |
-          echo "${{ secrets.registry_password }}" | \
-            docker login ${{ inputs.registry_url }} \
-            -u ${{ inputs.registry_username }} \
-            --password-stdin
 
       - name: Push Image
-        if: inputs.push_image == true
         run: docker push ${{ env.FULL_IMAGE }}
 
       - uses: hashicorp/setup-terraform@v3

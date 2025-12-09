@@ -1,30 +1,14 @@
-name: Deploy to an AWS ECS instance via Terraform
+name: Deploy to AWS ECS via Terraform
 
 on: workflow_dispatch
 
 jobs:
-  AWS_Auth:
-    runs-on: ubuntu-latest
-    steps:
-      - name: AWS Authentication
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-  Deploy_to_AWS:
-    needs: AWS_Auth
+  deploy:
     uses: ./.github/workflows/template.yml
     with:
-      registry_url: ghcr.io/${{ github.repository_owner }}
-      registry_username: ${{ github.actor }}
-      push_image: true
+      cloud_provider: aws
       tf_directory: terraform/aws/app
       tf_vars: >
         -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards"
         -var "image_tag=latest"
-    secrets:
-      registry_password: ${{ secrets.GITHUB_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    secrets: inherit

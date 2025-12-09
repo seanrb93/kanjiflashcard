@@ -3,29 +3,11 @@ name: Deploy to Azure Container Apps via Terraform
 on: workflow_dispatch
 
 jobs:
-  Azure_Auth:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Login to ACR
-        run: |
-          az acr login --name ${{ secrets.ACR_NAME }}
-
-  Deploy_to_Azure:
-    needs: Azure_Auth
+  deploy:
     uses: ./.github/workflows/template.yml
     with:
-      registry_url: ${{ secrets.ACR_LOGIN_SERVER }}
-      registry_username: ${{ secrets.ACR_USERNAME }}
-      registry_password: ${{ secrets.ACR_PASSWORD }}
-      push_image: true
+      cloud_provider: azure
       tf_directory: terraform/azure
       tf_vars: >
-        -var "image_repo=${{ secrets.ACR_LOGIN_SERVER }}/kanji-flashcards"
-        -var "image_tag=latest"
+        -var "image=kanji-flashcards:latest"
+    secrets: inherit

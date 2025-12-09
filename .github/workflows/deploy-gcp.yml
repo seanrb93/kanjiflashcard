@@ -3,27 +3,12 @@ name: Deploy to Google Cloud Run via Terraform
 on: workflow_dispatch
 
 jobs:
-  GCP_Auth:
-    runs-on: ubuntu-latest
-    steps:
-      - name: GCP Auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Configure Artifact Registry auth
-        run: gcloud auth configure-docker europe-west2-docker.pkg.dev
-
-  Deploy_to_GCP:
-    needs: GCP_Auth
+  deploy:
     uses: ./.github/workflows/template.yml
     with:
-      registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
-      registry_username: ""
-      registry_password: ""
-      push_image: true
+      cloud_provider: gcp
       tf_directory: terraform/gcp/app
       tf_vars: >
         -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
-        -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards"
         -var "image_tag=latest"
+    secrets: inherit
