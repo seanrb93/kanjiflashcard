@@ -20,8 +20,6 @@ on:
         required: false
       AZURE_SUBSCRIPTION_ID:
         required: false
-      ACR_NAME:
-        required: false
       GCP_SA_KEY:
         required: false
       GCP_PROJECT_ID:
