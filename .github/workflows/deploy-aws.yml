@@ -3,7 +3,7 @@ name: Deploy to an AWS ECS instance via Terraform
 on: workflow_dispatch
 
 jobs:
-  deploy:
+  Deploy_to_AWS:
     runs-on: ubuntu-latest
     steps:
       - name: AWS Authentication
@@ -14,7 +14,7 @@ jobs:
           aws-region: eu-west-1
 
       - name: Reusable Pipeline
-        uses: ./.github/workflows/ci-template.yml
+        uses: ./.github/workflows/template.yml@main
         with:
           registry_url: ghcr.io/${{ github.repository_owner }}
           registry_username: ""

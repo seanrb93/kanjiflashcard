@@ -3,7 +3,7 @@ name: Deploy to Azure Container Apps via Terraform
 on: workflow_dispatch
 
 jobs:
-  deploy:
+  Deploy_to_Azure:
     runs-on: ubuntu-latest
     steps:
       - name: Azure Login
@@ -18,7 +18,7 @@ jobs:
           az acr login --name ${{ secrets.ACR_NAME }}
 
       - name: Reusable Pipeline
-        uses: ./.github/workflows/ci-template.yml
+        uses: ./.github/workflows/template.yml@main
         with:
           registry_url: ${{ secrets.ACR_LOGIN_SERVER }}
           registry_username: ${{ secrets.ACR_USERNAME }}

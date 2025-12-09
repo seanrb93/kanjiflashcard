@@ -3,7 +3,7 @@ name: Deploy to Google Cloud Run via Terraform
 on: workflow_dispatch
 
 jobs:
-  deploy:
+  Deploy_to_GCP:
     runs-on: ubuntu-latest
     steps:
       - name: GCP Auth
@@ -15,7 +15,7 @@ jobs:
         run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
       - name: Reusable Pipeline
-        uses: ./.github/workflows/ci-template.yml
+        uses: ./.github/workflows/template.yml@main
         with:
           registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
           registry_username: ""
