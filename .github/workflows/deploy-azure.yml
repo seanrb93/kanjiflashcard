@@ -18,20 +18,14 @@ jobs:
           az acr login --name ${{ secrets.ACR_NAME }}
 
   Deploy_to_Azure:
-    runs-on: ubuntu-latest
     needs: Azure_Auth
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v3
-        
-      - name: Reusable Pipeline
-        uses: ./.github/workflows/template.yml
-        with:
-          registry_url: ${{ secrets.ACR_LOGIN_SERVER }}
-          registry_username: ${{ secrets.ACR_USERNAME }}
-          registry_password: ${{ secrets.ACR_PASSWORD }}
-          push_image: true
-          tf_directory: terraform/azure
-          tf_vars: >
-            -var "image_repo=${{ secrets.ACR_LOGIN_SERVER }}/kanji-flashcards"
-            -var "image_tag=latest"
+    uses: ./.github/workflows/template.yml
+    with:
+      registry_url: ${{ secrets.ACR_LOGIN_SERVER }}
+      registry_username: ${{ secrets.ACR_USERNAME }}
+      registry_password: ${{ secrets.ACR_PASSWORD }}
+      push_image: true
+      tf_directory: terraform/azure
+      tf_vars: >
+        -var "image_repo=${{ secrets.ACR_LOGIN_SERVER }}/kanji-flashcards"
+        -var "image_tag=latest"
