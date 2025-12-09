@@ -21,10 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: Azure_Auth
     steps:
-      - name: Login to ACR
-        run: |
-          az acr login --name ${{ secrets.ACR_NAME }}
-
+      - name: Checkout branch
+        uses: actions/checkout@v3
+        
       - name: Reusable Pipeline
         uses: ./.github/workflows/template.yml
         with:

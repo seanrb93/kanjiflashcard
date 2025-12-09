@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: AWS_Auth
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
       - name: Reusable Pipeline
         uses: ./.github/workflows/template.yml
         with:
