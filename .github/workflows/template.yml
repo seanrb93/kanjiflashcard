@@ -82,7 +82,6 @@ jobs:
         run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
       # === Common Steps ===
-
       - name: Validate FULL_IMAGE
         run: |
           if [ -z "${FULL_IMAGE:-}" ]; then
