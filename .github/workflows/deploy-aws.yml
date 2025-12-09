@@ -19,10 +19,12 @@ jobs:
     with:
       registry_url: ghcr.io/${{ github.repository_owner }}
       registry_username: ${{ github.actor }}
-      registry_password: ""
       push_image: true
-      tf_directory: terraform/aws
+      tf_directory: terraform/aws/app
       tf_vars: >
         -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards"
         -var "image_tag=latest"
-    secrets: inherit
+    secrets:
+      registry_password: ${{ secrets.GITHUB_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
