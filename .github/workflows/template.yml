@@ -21,6 +21,13 @@ on:
       tf_vars:
         required: false
         type: string
+    secrets:
+      registry_password:
+        required: false
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
 
 jobs:
   pipeline:
@@ -56,7 +63,7 @@ jobs:
       - name: Login to registry
         if: inputs.registry_password != ''
         run: |
-          echo "${{ inputs.registry_password }}" | \
+          echo "${{ secrets.registry_password }}" | \
             docker login ${{ inputs.registry_url }} \
             -u ${{ inputs.registry_username }} \
             --password-stdin
