@@ -3,7 +3,7 @@ name: Deploy to Google Cloud Run via Terraform
 on: workflow_dispatch
 
 jobs:
-  Deploy_to_GCP:
+  GCP_Auth:
     runs-on: ubuntu-latest
     steps:
       - name: GCP Auth
@@ -14,15 +14,17 @@ jobs:
       - name: Configure Artifact Registry auth
         run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-      - name: Reusable Pipeline
-        uses: seanrb93/kanjiflashcard/.github/workflows/ci-template.yml@main
-        with:
-          registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
-          registry_username: ""
-          registry_password: ""
-          push_image: true
-          tf_directory: terraform/gcp/app
-          tf_vars: >
-            -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
-            -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards"
-            -var "image_tag=latest"
+  Deploy_to_GCP:
+    needs: GCP_Auth
+    uses: ./.github/workflows/template.yml
+    with:
+      registry_url: europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app
+      registry_username: ""
+      registry_password: ""
+      push_image: true
+      tf_directory: terraform/gcp/app
+      tf_vars: >
+        -var "project_id=${{ secrets.GCP_PROJECT_ID }}"
+        -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards"
+        -var "image_tag=latest"
+    secrets: inherit
