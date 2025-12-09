@@ -47,8 +47,11 @@ jobs:
           java-version: "21"
           cache: "maven"
 
-      - name: Test & Build Java
-        run: mvn -B package
+      - name: Run unit tests
+        run: mvn -B test
+
+      - name: Package application
+        run: mvn -B package -DskipTests
 
       # === GitHub Container Registry (AWS & Azure) ===
       - name: Login to GHCR
@@ -79,6 +82,14 @@ jobs:
         run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
       # === Common Steps ===
+
+      - name: Validate FULL_IMAGE
+        run: |
+          if [ -z "${FULL_IMAGE:-}" ]; then
+            echo "FULL_IMAGE is not set. Check cloud_provider and image setup."
+            exit 1
+          fi
+
       - name: Build Docker
         run: docker build -t ${{ env.FULL_IMAGE }} .
 
@@ -99,13 +110,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-        # === Authenrticate with GCP for Terraform ===
-      - name: Configure GCP Credentials for Terraform
-        if: inputs.cloud_provider == 'gcp'
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
       # === Authenticate with Azure for Terraform ===
       - name: Configure Azure Credentials for Terraform
         if: inputs.cloud_provider == 'azure'
@@ -119,7 +123,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ inputs.tf_directory }}
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Apply
         working-directory: ${{ inputs.tf_directory }}
