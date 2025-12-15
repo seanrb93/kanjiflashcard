@@ -121,8 +121,8 @@ jobs:
       - name: Terraform init and apply
         working-directory: ${{ inputs.tf_directory }}
         run: |
-          chmod +x ${{ github.workspace }}/.github/scripts/terraform-apply.sh
-          ${{ github.workspace }}/.github/scripts/terraform-apply.sh \
+          chmod +x ${{ github.workspace }}/.github/scripts/terraform-deploy.sh
+          ${{ github.workspace }}/.github/scripts/terraform-deploy.sh \
             "${{ inputs.cloud_provider }}" \
             "${{ secrets.GCP_PROJECT_ID }}" \
             "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
