@@ -44,14 +44,14 @@ jobs:
           java-version: "21"
           cache: "maven"
 
-      - name: Run unit tests
+      - name: Run application unit tests
         run: mvn -B test
 
       - name: Package application
         run: mvn -B package -DskipTests
 
       # === GitHub Container Registry (For AWS & Azure) ===
-      - name: Login to GHCR
+      - name: Login to  GitHub Container Registry
         if: inputs.cloud_provider == 'aws' || inputs.cloud_provider == 'azure'
         uses: docker/login-action@v3
         with:
@@ -59,22 +59,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set GHCR Image
+      - name: Set GitHub Container Registry Image
         if: inputs.cloud_provider == 'aws' || inputs.cloud_provider == 'azure'
         run: echo "FULL_IMAGE=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_ENV
 
       # === Google Artifact Registry ===
-      - name: Login to GCP
+      - name: Login to Google Cloud
         if: inputs.cloud_provider == 'gcp'
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Configure GCR Auth
+      - name: Configure Google Artifact Registry Auth
         if: inputs.cloud_provider == 'gcp'
         run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-      - name: Set GCR Image
+      - name: Set Google Artifact Registry Image
         if: inputs.cloud_provider == 'gcp'
         run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_ENV
 
@@ -85,7 +85,7 @@ jobs:
             exit 1
           fi
 
-      - name: Build Docker
+      - name: Build Docker Image
         run: docker build -t ${{ env.FULL_IMAGE }} .
 
       - name: Scan Image with Trivy
@@ -96,7 +96,7 @@ jobs:
       - name: Push Image
         run: docker push ${{ env.FULL_IMAGE }}
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials for Terraform
         if: inputs.cloud_provider == 'aws'
         uses: aws-actions/configure-aws-credentials@v2
         with:
