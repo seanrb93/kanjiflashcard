@@ -72,5 +72,5 @@ resource "google_cloud_run_v2_service_iam_member" "invoker" {
 }
 
 output "cloud_run_url" {
-  value = google_cloud_run_v2_service.kanji.status[0].url
+  value = google_cloud_run_v2_service.kanji.uri
 }
