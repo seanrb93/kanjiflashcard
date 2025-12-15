@@ -13,8 +13,7 @@ jobs:
       cloud_provider: aws
       tf_directory: terraform/aws
       tf_vars: >
-        -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards"
-        -var "image_tag=latest"
+        -var "image=ghcr.io/${{ github.repository_owner }}/kanji-flashcards:latest"
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
