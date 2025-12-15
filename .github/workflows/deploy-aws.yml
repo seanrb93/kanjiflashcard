@@ -7,7 +7,7 @@ permissions:
   packages: write
 
 jobs:
-  deploy:
+  deploy-aws:
     uses: ./.github/workflows/template.yml
     with:
       cloud_provider: aws
