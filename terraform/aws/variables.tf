@@ -13,3 +13,4 @@ variable "image_tag" {
 variable "service_name" {
   default = "kanji-flashcards"
 }
+

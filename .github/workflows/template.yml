@@ -35,7 +35,6 @@ jobs:
 
     env:
       IMAGE_NAME: kanji-flashcards
-      IMAGE_TAG: latest
       FULL_IMAGE: ""
 
     steps:
@@ -65,7 +64,7 @@ jobs:
 
       - name: Set GHCR Image
         if: inputs.cloud_provider == 'aws' || inputs.cloud_provider == 'azure'
-        run: echo "FULL_IMAGE=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        run: echo "FULL_IMAGE=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_ENV
 
       # === Google Artifact Registry ===
       - name: Login to GCP
@@ -80,9 +79,8 @@ jobs:
 
       - name: Set GCR Image
         if: inputs.cloud_provider == 'gcp'
-        run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        run: echo "FULL_IMAGE=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_ENV
 
-      # === Common Steps ===
       - name: Validate FULL_IMAGE
         run: |
           if [ -z "${FULL_IMAGE:-}" ]; then
@@ -101,7 +99,6 @@ jobs:
       - name: Push Image
         run: docker push ${{ env.FULL_IMAGE }}
 
-      # === Authenticate with AWS for Terraform ===
       - name: Configure AWS Credentials
         if: inputs.cloud_provider == 'aws'
         uses: aws-actions/configure-aws-credentials@v2
@@ -110,7 +107,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      # === Authenticate with Azure for Terraform ===
       - name: Configure Azure Credentials for Terraform
         if: inputs.cloud_provider == 'azure'
         uses: azure/login@v2
@@ -132,11 +128,15 @@ jobs:
           if [ "${{ inputs.cloud_provider }}" = "gcp" ]; then
             terraform apply -auto-approve -input=false \
               -var "project_id=${{ secrets.GCP_PROJECT_ID }}" \
-              ${{ inputs.tf_vars }}
+              -var "image_repo=europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kanji-app/kanji-flashcards" \
+              -var "image_tag=${{ github.sha }}"
           elif [ "${{ inputs.cloud_provider }}" = "azure" ]; then
             terraform apply -auto-approve -input=false \
               -var "subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-              ${{ inputs.tf_vars }}
+              -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards" \
+              -var "image_tag=${{ github.sha }}"
           else
-            terraform apply -auto-approve -input=false ${{ inputs.tf_vars }}
+            terraform apply -auto-approve -input=false \
+              -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards" \
+              -var "image_tag=${{ github.sha }}"
           fi

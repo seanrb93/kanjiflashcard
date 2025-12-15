@@ -26,3 +26,9 @@ variable "service_name" {
     description = "The name of the Cloud Run service."
     default     = "kanji-flashcards"
 }
+
+variable "invoker_member" {
+    type        = string
+    description = "The member who is granted the Cloud Run invoker role."
+    default     = "allUsers"
+}

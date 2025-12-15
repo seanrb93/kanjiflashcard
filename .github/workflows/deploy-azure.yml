@@ -12,9 +12,6 @@ jobs:
     with:
       cloud_provider: azure
       tf_directory: terraform/azure
-      tf_vars: >
-        -var "image_repo=ghcr.io/${{ github.repository_owner }}/kanji-flashcards"
-        -var "image_tag=latest"
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

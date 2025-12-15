@@ -43,7 +43,7 @@ resource "azurerm_container_app" "kanji" {
   template {
     container {
       name   = "kanji-flashcards"
-      image  = var.image
+      image  = "${var.image_repo}:${var.image_tag}"
       cpu    = 0.5
       memory = "1.0Gi"
 

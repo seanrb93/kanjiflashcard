@@ -19,64 +19,58 @@ provider "google" {
   region  = var.region
 }
 
-resource "google_compute_network" "vpc" {
-  name                    = "kanji-vpc"
-  auto_create_subnetworks = false
-}
-
-resource "google_compute_subnetwork" "subnet" {
-  name          = "kanji-subnet"
-  ip_cidr_range = "10.0.0.0/24"
-  region        = var.region
-  network       = google_compute_network.vpc.id
-}
-
-resource "google_compute_firewall" "allow_http" {
-  name    = "allow-http"
-  network = google_compute_network.vpc.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80"]
-  }
-
-  source_ranges = ["0.0.0.0/0"]
-}
-
 resource "google_project_service" "run_api" {
   project = var.project_id
   service = "run.googleapis.com"
   disable_on_destroy = false
 }
 
-resource "google_cloud_run_service" "kanji" {
+resource "google_project_service" "iam_api" {
+  project = var.project_id
+  service = "iam.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "artifact_registry_api" {
+  project = var.project_id
+  service = "artifactregistry.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_service_account" "cloud_run_sa" {
+  account_id   = "kanji-cloud-run"
+  display_name = "Kanji Cloud Run Service Account"
+}
+
+resource "google_cloud_run_v2_service" "kanji" {
   name     = var.service_name
   location = var.region
 
   template {
-    spec {
+    service_account = google_service_account.cloud_run_sa.email
+    
       containers {
-        image = "europe-west2-docker.pkg.dev/${var.project_id}/kanji-app/kanji-flashcards:latest"
+        image = "${var.image_repo}:${var.image_tag}"
         ports {
           container_port = 8080
         }
       }
-    }
   }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
+  depends_on = [ 
+  google_project_service.run_api,
+  google_project_service.iam_api,
+  google_project_service.artifact_registry_api
+  ]
 }
 
-resource "google_cloud_run_service_iam_member" "public_invoker" {
-  service = google_cloud_run_service.kanji.name
-  location = google_cloud_run_service.kanji.location
-  role   = "roles/run.invoker"
-  member = "allUsers"
+resource "google_cloud_run_v2_service_iam_member" "invoker" {
+  name     = google_cloud_run_v2_service.kanji.name
+  location = google_cloud_run_v2_service.kanji.location
+  role     = "roles/run.invoker"
+  member   = var.invoker_member
 }
 
 output "cloud_run_url" {
-  value = google_cloud_run_service.kanji.status[0].url
+  value = google_cloud_run_v2_service.kanji.status[0].url
 }

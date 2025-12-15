@@ -12,8 +12,6 @@ jobs:
     with:
       cloud_provider: gcp
       tf_directory: terraform/gcp
-      tf_vars: >
-        -var "image_tag=latest"
     secrets:
       GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
