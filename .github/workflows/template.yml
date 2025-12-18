@@ -6,10 +6,11 @@ on:
       cloud_provider:
         required: true
         type: string
-        description: "aws, azure, or gcp"
+        description: "The cloud provider to deploy to (AWS, Azure, GCP)"
       tf_directory:
         required: true
         type: string
+        description: "Path to the Terraform directory for the target cloud provider"
     secrets:
       AZURE_CLIENT_ID:
         required: false
