@@ -47,10 +47,7 @@ jobs:
 
       - name: Run application unit tests
         run: mvn -B test
-
-      - name: Package application
-        run: mvn -B package -DskipTests
-
+        
       # === GitHub Container Registry (For AWS & Azure) ===
       - name: Login to  GitHub Container Registry
         if: inputs.cloud_provider == 'aws' || inputs.cloud_provider == 'azure'
